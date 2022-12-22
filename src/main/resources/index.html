@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta charset="UTF-8">
+    <title>支付宝当面付Demo演示</title>
+    <style>
+        * {
+            margin: 0 auto;
+        }
+        .root {
+            width: 260px;
+        }
+        .img_box {
+            width: 260px;
+            height: 260px;
+            background-color: #adadad;
+        }
+        button {
+            width: 260px;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="root">
+    <div class="img_box"><img width="260" height="260" id="qr" src="" alt=""></div>
+    <button onclick="getOrderQr()">获取订单</button>
+    <div class="response" id="response"></div>
+
+    <script>
+
+        /**
+         * 获取一个二维码
+         */
+        function getOrderQr() {
+            let qrImg = document.getElementById('qr');
+            qrImg.src = "http://**************.com/pay/getQr?time=" + new Date().getTime()
+
+            //开始轮询查询订单
+            orderResponse()
+        }
+
+        let number = 1;
+        const responseView = document.getElementById('response')
+
+        /**
+         * 循环查询订单响应
+         */
+        function orderResponse() {
+
+            //每2秒查询一次支付状态
+            setTimeout(function () {
+                //请求接口查询支付状态
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', "http://39.107.80.105:8080/pay/searchOrder", true);
+                xhr.send(null);
+                xhr.onreadystatechange = function () {
+                    if (xhr.status === 200 && xhr.readyState === 4) {
+                        const json = JSON.parse(xhr.responseText);
+                        if (200 === json.code) {
+                            //支付成功
+                            responseView.innerText = xhr.responseText
+                        } else {
+                            //没有支付，继续下一次查询
+                            responseView.innerText = '第' + number + '次查询，结果：' + xhr.responseText
+                            number++
+                            orderResponse()
+                        }
+                    }
+                }
+            }, 2000)
+        }
+    </script>
+</div>
+</body>
+</html>
