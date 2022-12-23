@@ -53,7 +53,7 @@
             setTimeout(function () {
                 //请求接口查询支付状态
                 const xhr = new XMLHttpRequest();
-                xhr.open('GET', "http://39.107.80.105:8080/pay/searchOrder", true);
+                xhr.open('GET', "http://**************.com/pay/searchOrder", true);
                 xhr.send(null);
                 xhr.onreadystatechange = function () {
                     if (xhr.status === 200 && xhr.readyState === 4) {
